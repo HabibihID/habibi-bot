@@ -58,7 +58,7 @@ module.exports = {
             await client.message.send(chatJid, `❌ Gagal ambil daftar grup: ${e.message}`)
             return
         }
-        const targets = (groups || []).filter((g) => g.id?.endsWith('@g.us'))
+        const targets = (groups || []).filter((g) => g.jid?.endsWith('@g.us'))
         if (!targets.length) {
             await client.message.send(chatJid, '❌ Tidak ada grup yang tersedia.')
             return
@@ -94,14 +94,14 @@ module.exports = {
             const g = targets[i]
             try {
                 if (imageBuf) {
-                    await client.message.send(g.id, {
+                    await client.message.send(g.jid, {
                         type: 'image',
                         media: imageBuf,
                         mimetype: 'image/jpeg',
                         caption: text || ''
                     })
                 } else {
-                    await client.message.send(g.id, text)
+                    await client.message.send(g.jid, text)
                 }
                 sukses++
             } catch (e) {
