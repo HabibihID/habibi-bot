@@ -70,7 +70,7 @@ module.exports = {
                 await client.message.send(g.jid, {
                     type: 'text',
                     text: `${text}\n\n${tagText}`,
-                    contextInfo: { mentionedJid: jids }
+                    contextInfo: { mentionedJids: jids }
                 })
                 sukses++
             } catch (e) {

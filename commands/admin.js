@@ -27,10 +27,10 @@ async function adminCommand({ client, chatJid, event }, action, actionFn, action
     }
     try {
         await actionFn(chatJid, [target])
-        await client.message.send(chatJid, `✅ @${target.split('@')[0]} ${actionName}!`, {
+        await client.message.send(chatJid, {
             type: 'text',
             text: `✅ @${target.split('@')[0]} ${actionName}!`,
-            contextInfo: { mentionedJid: [target] }
+            contextInfo: { mentionedJids: [target] }
         })
     } catch (e) {
         await client.message.send(chatJid, `❌ Gagal: ${e.message}\n(Pastikan bot adalah admin)`)

@@ -28,7 +28,7 @@ module.exports = {
         await client.message.send(chatJid, {
             type: 'text',
             text,
-            contextInfo: { mentionedJid: jids }
+            contextInfo: { mentionedJids: jids }
         })
     }
 }
