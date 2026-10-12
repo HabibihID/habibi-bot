@@ -16,7 +16,8 @@ module.exports = {
             `• ${config.prefix}pushkontak <id> <pesan> — kirim ke grup tertentu\n` +
             `• ${config.prefix}joingc <link> — join grup via link\n` +
             `• ${config.prefix}cekidch <link> — cek ID channel\n` +
-            `• ${config.prefix}jpmtag <pesan> — broadcast + tag semua\n\n` +
+            `• ${config.prefix}jpmtag <pesan> — broadcast + tag semua\n` +
+            `• ${config.prefix}swgc <pesan> — status ke semua grup (eksperimental)\n\n` +
             `_Powered by @habibicox10/zapo-id_`
         await client.message.send(chatJid, text)
     }
