@@ -14,7 +14,9 @@ module.exports = {
             `• ${config.prefix}jpm <pesan> — broadcast ke semua grup\n` +
             `• ${config.prefix}listgc — daftar grup bot\n` +
             `• ${config.prefix}pushkontak <id> <pesan> — kirim ke grup tertentu\n` +
-            `• ${config.prefix}joingc <link> — join grup via link\n\n` +
+            `• ${config.prefix}joingc <link> — join grup via link\n` +
+            `• ${config.prefix}cekidch <link> — cek ID channel\n` +
+            `• ${config.prefix}jpmtag <pesan> — broadcast + tag semua\n\n` +
             `_Powered by @habibicox10/zapo-id_`
         await client.message.send(chatJid, text)
     }
