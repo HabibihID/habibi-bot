@@ -21,7 +21,8 @@ module.exports = {
             `• ${config.prefix}poll <tanya> | <opsi1> | <opsi2> — bikin polling\n` +
             `• ${config.prefix}promote — reply/mention jadi admin\n` +
             `• ${config.prefix}demote — reply/mention turunkan admin\n` +
-            `• ${config.prefix}kick — reply/mention keluarkan\n\n` +
+            `• ${config.prefix}kick — reply/mention keluarkan\n` +
+            `• ${config.prefix}privacy — cek/ubah privacy akun\n\n` +
             `_Powered by @habibicox10/zapo-id_`
         await client.message.send(chatJid, text)
     }
