@@ -57,7 +57,7 @@ module.exports = {
         if (!text && !imageMsg) {
             await client.message.send(
                 chatJid,
-                `*SWGC (eksperimental)*\n\nCara pakai:\n.swgc <pesan>\nKirim gambar + caption .swgc <pesan>\n.swgc stop`
+                `*SWGC*\n\nCara pakai:\n.swgc <pesan>\nKirim gambar/video + caption .swgc <pesan>\n.swgc stop`
             )
             return
         }
@@ -75,16 +75,25 @@ module.exports = {
             return
         }
 
-        // Download gambar kalau ada
-        let imageBuf = null
+        // Download media kalau ada (gambar/video)
+        let mediaBuf = null
+        let mediaType = null // 'image' | 'video'
+        const videoMsg = msg?.videoMessage || quoted?.videoMessage
         if (imageMsg) {
+            mediaType = 'image'
+        } else if (videoMsg) {
+            mediaType = 'video'
+        }
+
+        if (mediaType) {
             try {
-                imageBuf = await downloadMediaMessage({
-                    message: { imageMessage: imageMsg },
-                    key: event.key
-                })
+                await client.message.send(chatJid, '⏳ Upload media...')
+                const dlMsg = mediaType === 'image'
+                    ? { imageMessage: imageMsg }
+                    : { videoMessage: videoMsg }
+                mediaBuf = await downloadMediaMessage({ message: dlMsg, key: event.key })
             } catch (e) {
-                await client.message.send(chatJid, `❌ Gagal download gambar: ${e.message}`)
+                await client.message.send(chatJid, `❌ Gagal download media: ${e.message}`)
                 return
             }
         }
@@ -102,13 +111,43 @@ module.exports = {
             const g = targets[i]
             try {
                 let inner
-                if (imageBuf) {
-                    // Untuk gambar: kirim sebagai image biasa dulu, lalu bungkus
-                    // (upload via pipeline normal, lalu wrap hasilnya)
-                    // Fallback: kirim teks saja kalau gambar gagal
-                    inner = { imageMessage: { caption: text || '' } }
-                    // NOTE: upload media manual belum didukung di path ini
-                    throw new Error('SWGC gambar belum didukung, pakai teks saja')
+                if (mediaBuf) {
+                    // Upload ke server WA, lalu bikin protobuf manual
+                    const mimetype = mediaType === 'image' ? 'image/jpeg' : 'video/mp4'
+                    const upload = await client.message.upload(mediaBuf, {
+                        type: mediaType,
+                        mimetype
+                    })
+                    if (mediaType === 'image') {
+                        inner = {
+                            imageMessage: {
+                                url: upload.url,
+                                mimetype,
+                                caption: text || '',
+                                fileSha256: upload.fileSha256,
+                                fileLength: upload.fileLength,
+                                mediaKey: upload.mediaKey,
+                                fileEncSha256: upload.fileEncSha256,
+                                directPath: upload.directPath,
+                                mediaKeyTimestamp: upload.mediaKeyTimestamp
+                            }
+                        }
+                    } else {
+                        inner = {
+                            videoMessage: {
+                                url: upload.url,
+                                mimetype,
+                                fileSha256: upload.fileSha256,
+                                fileLength: upload.fileLength,
+                                mediaKey: upload.mediaKey,
+                                caption: text || '',
+                                fileEncSha256: upload.fileEncSha256,
+                                directPath: upload.directPath,
+                                mediaKeyTimestamp: upload.mediaKeyTimestamp,
+                                streamingSidecar: upload.streamingSidecar
+                            }
+                        }
+                    }
                 } else {
                     inner = { conversation: text }
                 }
