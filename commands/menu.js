@@ -22,7 +22,8 @@ module.exports = {
             `• ${config.prefix}promote — reply/mention jadi admin\n` +
             `• ${config.prefix}demote — reply/mention turunkan admin\n` +
             `• ${config.prefix}kick — reply/mention keluarkan\n` +
-            `• ${config.prefix}privacy — cek/ubah privacy akun\n\n` +
+            `• ${config.prefix}privacy — cek/ubah privacy akun\n` +
+            `• ${config.prefix}call <nomor> — telepon + putar pesan suara\n\n` +
             `_Powered by @habibicox10/zapo-id_`
         await client.message.send(chatJid, text)
     }
