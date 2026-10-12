@@ -29,7 +29,8 @@ module.exports = {
             `• ${config.prefix}open / close — buka/tutup grup\n` +
             `• ${config.prefix}setname / setdesc — ganti nama/deskripsi\n` +
             `• ${config.prefix}revokelink — reset link invite\n` +
-            `• ${config.prefix}leave — bot keluar grup\n\n` +
+            `• ${config.prefix}leave — bot keluar grup\n` +
+            `• ${config.prefix}button <teks> | <tbl1> | <tbl2> — pesan + tombol (eksperimental)\n\n` +
             `_Powered by @habibicox10/zapo-id_`
         await client.message.send(chatJid, text)
     }
