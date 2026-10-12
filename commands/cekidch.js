@@ -29,9 +29,9 @@ module.exports = {
                 chatJid,
                 `📢 *INFO CHANNEL*\n\n` +
                 `Nama: *${meta.name || '-'}*\n` +
-                `ID: \`${meta.jid || meta.id}\`\n` +
-                `Followers: ${meta.followersCount ?? '?'}\n` +
-                `Verified: ${meta.verified ? '✅' : '❌'}`
+                `ID: \`${meta.jid}\`\n` +
+                `Followers: ${meta.subscribersCount ?? '?'}\n` +
+                `Verified: ${meta.verification === 'VERIFIED' ? '✅' : '❌'}`
             )
         } catch (e) {
             await client.message.send(chatJid, `❌ Gagal ambil info channel: ${e.message}`)

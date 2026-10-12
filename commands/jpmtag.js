@@ -57,9 +57,15 @@ module.exports = {
             if (stopped) break
             const g = targets[i]
             try {
-                // Ambil member grup
+                // Ambil member grup (prefer phoneNumber/PN biar mention jalan)
                 const meta = await client.group.queryGroupMetadata(g.jid)
-                const jids = (meta.participants || []).map((p) => p.jid || p.id).filter(Boolean)
+                const jids = (meta.participants || [])
+                    .map((p) => {
+                        // Prioritas: phoneNumber (PN) > jid
+                        if (p.phoneNumber) return p.phoneNumber.includes('@') ? p.phoneNumber : `${p.phoneNumber}@s.whatsapp.net`
+                        return p.jid
+                    })
+                    .filter(Boolean)
                 const tagText = jids.map((j) => `@${j.split('@')[0]}`).join(' ')
                 await client.message.send(g.jid, {
                     type: 'text',

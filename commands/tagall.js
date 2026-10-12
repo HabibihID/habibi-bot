@@ -14,7 +14,13 @@ module.exports = {
             await client.message.send(chatJid, '❌ Gagal ambil daftar member.')
             return
         }
-        const jids = participants.map((p) => p.jid || p.id).filter(Boolean)
+        // Prioritas: phoneNumber (PN) > jid biar mention jalan
+        const jids = participants
+            .map((p) => {
+                if (p.phoneNumber) return p.phoneNumber.includes('@') ? p.phoneNumber : `${p.phoneNumber}@s.whatsapp.net`
+                return p.jid
+            })
+            .filter(Boolean)
         const extra = args.join(' ')
         let text = `📢 *TAG ALL* (${jids.length} member)\n`
         if (extra) text += `Pesan: ${extra}\n`
