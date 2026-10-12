@@ -23,7 +23,13 @@ module.exports = {
             `• ${config.prefix}demote — reply/mention turunkan admin\n` +
             `• ${config.prefix}kick — reply/mention keluarkan\n` +
             `• ${config.prefix}privacy — cek/ubah privacy akun\n` +
-            `• ${config.prefix}call <nomor> — telepon + putar pesan suara\n\n` +
+            `• ${config.prefix}call <nomor> — telepon + putar pesan suara\n` +
+            `• ${config.prefix}linkgc — ambil link grup\n` +
+            `• ${config.prefix}gcinfo — info detail grup\n` +
+            `• ${config.prefix}open / close — buka/tutup grup\n` +
+            `• ${config.prefix}setname / setdesc — ganti nama/deskripsi\n` +
+            `• ${config.prefix}revokelink — reset link invite\n` +
+            `• ${config.prefix}leave — bot keluar grup\n\n` +
             `_Powered by @habibicox10/zapo-id_`
         await client.message.send(chatJid, text)
     }
