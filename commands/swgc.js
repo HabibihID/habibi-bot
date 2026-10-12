@@ -48,11 +48,19 @@ module.exports = {
 
         const text = args.join(' ').trim()
 
-        // Cek gambar: langsung atau quoted
+        // Cek gambar: langsung atau quoted (validasi ada mediaKey/url biar nggak false positive)
         const msg = event.message
         let imageMsg = msg?.imageMessage || null
         const quoted = msg?.extendedTextMessage?.contextInfo?.quotedMessage
         if (!imageMsg && quoted?.imageMessage) imageMsg = quoted.imageMessage
+        // Validasi: pastikan beneran ada media yang bisa didownload
+        if (imageMsg && !imageMsg.url && !imageMsg.mediaKey && !imageMsg.directPath) {
+            imageMsg = null
+        }
+        let videoMsg = msg?.videoMessage || quoted?.videoMessage || null
+        if (videoMsg && !videoMsg.url && !videoMsg.mediaKey && !videoMsg.directPath) {
+            videoMsg = null
+        }
 
         if (!text && !imageMsg) {
             await client.message.send(
@@ -78,7 +86,6 @@ module.exports = {
         // Download media kalau ada (gambar/video)
         let mediaBuf = null
         let mediaType = null // 'image' | 'video'
-        const videoMsg = msg?.videoMessage || quoted?.videoMessage
         if (imageMsg) {
             mediaType = 'image'
         } else if (videoMsg) {
