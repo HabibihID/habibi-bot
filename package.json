@@ -1,0 +1,1 @@
+{"dependencies":{"@habibicox10/zapo-id":"^1.10.0"},"description":"WhatsApp bot powered by @habibicox10/zapo-id — 5 fitur","engines":{"node":">=20.9.0"},"main":"index.js","name":"habibi-bot","scripts":{"start":"node index.js"},"version":"1.0.0"}
