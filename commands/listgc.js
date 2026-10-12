@@ -18,7 +18,22 @@ module.exports = {
 
         const terbuka = list.filter((g) => !g.announce).length
         const tertutup = list.filter((g) => g.announce).length
-        const sorted = [...list].sort((a, b) => (b.size || 0) - (a.size || 0))
+
+        // Ambil jumlah member tiap grup via metadata
+        const withSize = []
+        for (const g of list) {
+            let size = g.size || '?'
+            try {
+                const meta = await client.group.queryGroupMetadata(g.jid)
+                size = meta.participants?.length ?? size
+            } catch { /* pakai size dari list */ }
+            withSize.push({ ...g, memberCount: size })
+        }
+        const sorted = [...withSize].sort((a, b) => {
+            const sa = typeof a.memberCount === 'number' ? a.memberCount : 0
+            const sb = typeof b.memberCount === 'number' ? b.memberCount : 0
+            return sb - sa
+        })
 
         let msg = `╭───❰ *GROUP LIST* ❱\n`
         msg += `│ Total : *${list.length}* grup\n`
@@ -30,7 +45,7 @@ module.exports = {
             const status = g.announce ? '🔒 TERTUTUP' : '🟢 TERBUKA'
             msg += `\n◆ *${i + 1}. ${g.subject || 'Tanpa Nama'}*\n`
             msg += `┇ ID: ${g.jid}\n`
-            msg += `┇ Anggota: ${g.size || '?'} | ${status}\n`
+            msg += `┇ Anggota: ${g.memberCount} | ${status}\n`
         })
 
         // Potong kalau kepanjangan (limit WA ~65k char, aman di 6000)
