@@ -91,10 +91,15 @@ module.exports = {
         if (mediaType) {
             try {
                 await client.message.send(chatJid, '⏳ Upload media...')
+                // downloadMediaMessage terima Proto.IMessage langsung
                 const dlMsg = mediaType === 'image'
                     ? { imageMessage: imageMsg }
                     : { videoMessage: videoMsg }
-                mediaBuf = await downloadMediaMessage({ message: dlMsg, key: event.key })
+                const stream = await downloadMediaMessage(dlMsg)
+                // Stream -> Buffer
+                const chunks = []
+                for await (const chunk of stream) chunks.push(chunk)
+                mediaBuf = Buffer.concat(chunks)
             } catch (e) {
                 await client.message.send(chatJid, `❌ Gagal download media: ${e.message}`)
                 return

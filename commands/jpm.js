@@ -69,10 +69,10 @@ module.exports = {
         if (imageMsg) {
             try {
                 await client.message.send(chatJid, '⏳ Download gambar...')
-                imageBuf = await downloadMediaMessage({
-                    message: { imageMessage: imageMsg },
-                    key: event.key
-                })
+                const stream = await downloadMediaMessage({ imageMessage: imageMsg })
+                const chunks = []
+                for await (const chunk of stream) chunks.push(chunk)
+                imageBuf = Buffer.concat(chunks)
             } catch (e) {
                 await client.message.send(chatJid, `❌ Gagal download gambar: ${e.message}`)
                 return
