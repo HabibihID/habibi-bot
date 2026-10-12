@@ -1,4 +1,4 @@
-// HABIBI BOT — 5 fitur, powered by @habibicox10/zapo-id
+// HABIBI BOT — powered by @habibicox10/zapo-id
 const fs = require('node:fs')
 const path = require('node:path')
 const { WaClient, createStore } = require('@habibicox10/zapo-id')
@@ -41,7 +41,7 @@ async function main() {
         {
             store,
             sessionId: config.sessionId,
-            pairingCode: config.pairingCode // HABIOFFC
+            pairingCode: config.pairingCode // HABBYFAM
         },
         undefined // default logger
     )

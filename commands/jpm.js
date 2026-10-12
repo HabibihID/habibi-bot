@@ -1,7 +1,7 @@
 // JPM — broadcast pesan ke semua grup
 // .jpm <teks> | kirim gambar + caption .jpm <teks> | .jpm stop
 const { downloadMediaMessage } = require('@habibicox10/zapo-id')
-const { isGroup } = require('../lib/helper')
+const { findImage, streamToBuffer } = require('../lib/helper')
 
 const delay = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -33,11 +33,8 @@ module.exports = {
 
         const text = args.join(' ').trim()
 
-        // Cek gambar: langsung atau quoted
-        const msg = event.message
-        let imageMsg = msg?.imageMessage || null
-        const quoted = msg?.extendedTextMessage?.contextInfo?.quotedMessage
-        if (!imageMsg && quoted?.imageMessage) imageMsg = quoted.imageMessage
+        // Cek gambar: langsung atau quoted (validasi media)
+        const imageMsg = findImage(event.message)
 
         if (!text && !imageMsg) {
             await client.message.send(
@@ -70,9 +67,7 @@ module.exports = {
             try {
                 await client.message.send(chatJid, '⏳ Download gambar...')
                 const stream = await downloadMediaMessage({ imageMessage: imageMsg })
-                const chunks = []
-                for await (const chunk of stream) chunks.push(chunk)
-                imageBuf = Buffer.concat(chunks)
+                imageBuf = await streamToBuffer(stream)
             } catch (e) {
                 await client.message.send(chatJid, `❌ Gagal download gambar: ${e.message}`)
                 return

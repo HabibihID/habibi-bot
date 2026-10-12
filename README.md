@@ -1,6 +1,6 @@
 # HABIBI BOT 🤖
 
-Bot WhatsApp sederhana dengan 5 fitur, powered by `@habibicox10/zapo-id`.
+Bot WhatsApp sederhana dengan 12 fitur, powered by `@habibicox10/zapo-id`.
 
 ## Fitur
 

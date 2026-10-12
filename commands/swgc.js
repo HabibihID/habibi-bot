@@ -5,6 +5,7 @@
 // lalu kirim via client.message.send() sebagai raw IMessage.
 const crypto = require('node:crypto')
 const { downloadMediaMessage } = require('@habibicox10/zapo-id')
+const { findImage, findVideo, streamToBuffer } = require('../lib/helper')
 
 const delay = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -48,15 +49,10 @@ module.exports = {
 
         const text = args.join(' ').trim()
 
-        // Cek gambar: langsung atau quoted
-        // Syarat download: harus ada directPath + mediaKey (Uint8Array)
+        // Cek media: langsung atau quoted
         const msg = event.message
-        const hasMedia = (m) => m && m.directPath && m.mediaKey instanceof Uint8Array
-        let imageMsg = hasMedia(msg?.imageMessage) ? msg.imageMessage : null
-        const quoted = msg?.extendedTextMessage?.contextInfo?.quotedMessage
-        if (!imageMsg && hasMedia(quoted?.imageMessage)) imageMsg = quoted.imageMessage
-        let videoMsg = hasMedia(msg?.videoMessage) ? msg.videoMessage : null
-        if (!videoMsg && hasMedia(quoted?.videoMessage)) videoMsg = quoted.videoMessage
+        const imageMsg = findImage(msg)
+        const videoMsg = findVideo(msg)
 
         if (!text && !imageMsg) {
             await client.message.send(
@@ -96,10 +92,7 @@ module.exports = {
                     ? { imageMessage: imageMsg }
                     : { videoMessage: videoMsg }
                 const stream = await downloadMediaMessage(dlMsg)
-                // Stream -> Buffer
-                const chunks = []
-                for await (const chunk of stream) chunks.push(chunk)
-                mediaBuf = Buffer.concat(chunks)
+                mediaBuf = await streamToBuffer(stream)
             } catch (e) {
                 await client.message.send(chatJid, `❌ Gagal download media: ${e.message}`)
                 return

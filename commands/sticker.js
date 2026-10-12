@@ -1,14 +1,11 @@
 const { downloadMediaMessage } = require('@habibicox10/zapo-id')
+const { findImage, streamToBuffer } = require('../lib/helper')
 
 module.exports = {
     name: 'sticker',
     description: 'Bikin stiker dari gambar (reply/kirim gambar dengan caption)',
     async run({ client, chatJid, event }) {
-        const msg = event.message
-        // Cari imageMessage: langsung atau dari quoted
-        let imageMsg = msg?.imageMessage || null
-        const quoted = msg?.extendedTextMessage?.contextInfo?.quotedMessage
-        if (!imageMsg && quoted?.imageMessage) imageMsg = quoted.imageMessage
+        const imageMsg = findImage(event.message)
 
         if (!imageMsg) {
             await client.message.send(
@@ -20,17 +17,22 @@ module.exports = {
 
         await client.message.send(chatJid, '⏳ Bikin stiker...')
         try {
-            const webp = await downloadMediaMessage(
-                { message: { imageMessage: imageMsg }, key: event.key },
-                { asSticker: true }
-            ).catch(() => null)
+            // Coba konversi jadi stiker WebP
+            let webp = null
+            try {
+                const stream = await downloadMediaMessage(
+                    { imageMessage: imageMsg },
+                    { asSticker: true }
+                )
+                webp = await streamToBuffer(stream)
+            } catch {
+                webp = null
+            }
 
-            // Fallback: kirim sebagai image biasa kalau konversi gagal
+            // Fallback: kirim sebagai gambar biasa kalau konversi gagal
             if (!webp) {
-                const buf = await downloadMediaMessage({
-                    message: { imageMessage: imageMsg },
-                    key: event.key
-                })
+                const stream = await downloadMediaMessage({ imageMessage: imageMsg })
+                const buf = await streamToBuffer(stream)
                 await client.message.send(chatJid, {
                     type: 'image',
                     media: buf,
