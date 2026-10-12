@@ -43,9 +43,16 @@ async function main() {
 
     client.on('message', async (event) => {
         try {
-            if (event.key.fromMe) return
             const chatJid = event.key.remoteJid
             if (!chatJid) return
+
+            // Izinkan self-chat (tes ke diri sendiri), tapi skip pesan bot di chat lain
+            // biar nggak loop. Self-chat: fromMe=true + bukan grup.
+            const isSelfChat =
+                event.key.fromMe === true &&
+                !event.key.participant &&
+                chatJid.endsWith('@s.whatsapp.net')
+            if (event.key.fromMe && !isSelfChat) return
 
             const text = getText(event.message).trim()
             if (!text.startsWith(config.prefix)) return
