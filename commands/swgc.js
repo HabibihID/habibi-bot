@@ -100,8 +100,11 @@ module.exports = {
                     : { videoMessage: videoMsg }
                 mediaBuf = await downloadMediaMessage({ message: dlMsg, key: event.key })
             } catch (e) {
-                await client.message.send(chatJid, `❌ Gagal download media: ${e.message}`)
-                return
+                // Fallback: kalau media gagal didownload (misal quoted), kirim teks aja
+                console.log(`[swgc] download gagal, fallback teks: ${e.message}`)
+                mediaBuf = null
+                mediaType = null
+                await client.message.send(chatJid, '⚠️ Gambar gagal didownload, kirim sebagai teks.')
             }
         }
 
