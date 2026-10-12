@@ -48,19 +48,15 @@ module.exports = {
 
         const text = args.join(' ').trim()
 
-        // Cek gambar: langsung atau quoted (validasi ada mediaKey/url biar nggak false positive)
+        // Cek gambar: langsung atau quoted
+        // Syarat download: harus ada directPath + mediaKey (Uint8Array)
         const msg = event.message
-        let imageMsg = msg?.imageMessage || null
+        const hasMedia = (m) => m && m.directPath && m.mediaKey instanceof Uint8Array
+        let imageMsg = hasMedia(msg?.imageMessage) ? msg.imageMessage : null
         const quoted = msg?.extendedTextMessage?.contextInfo?.quotedMessage
-        if (!imageMsg && quoted?.imageMessage) imageMsg = quoted.imageMessage
-        // Validasi: pastikan beneran ada media yang bisa didownload
-        if (imageMsg && !imageMsg.url && !imageMsg.mediaKey && !imageMsg.directPath) {
-            imageMsg = null
-        }
-        let videoMsg = msg?.videoMessage || quoted?.videoMessage || null
-        if (videoMsg && !videoMsg.url && !videoMsg.mediaKey && !videoMsg.directPath) {
-            videoMsg = null
-        }
+        if (!imageMsg && hasMedia(quoted?.imageMessage)) imageMsg = quoted.imageMessage
+        let videoMsg = hasMedia(msg?.videoMessage) ? msg.videoMessage : null
+        if (!videoMsg && hasMedia(quoted?.videoMessage)) videoMsg = quoted.videoMessage
 
         if (!text && !imageMsg) {
             await client.message.send(
@@ -100,11 +96,8 @@ module.exports = {
                     : { videoMessage: videoMsg }
                 mediaBuf = await downloadMediaMessage({ message: dlMsg, key: event.key })
             } catch (e) {
-                // Fallback: kalau media gagal didownload (misal quoted), kirim teks aja
-                console.log(`[swgc] download gagal, fallback teks: ${e.message}`)
-                mediaBuf = null
-                mediaType = null
-                await client.message.send(chatJid, '⚠️ Gambar gagal didownload, kirim sebagai teks.')
+                await client.message.send(chatJid, `❌ Gagal download media: ${e.message}`)
+                return
             }
         }
 
