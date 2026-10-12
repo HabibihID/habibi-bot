@@ -66,10 +66,11 @@ module.exports = {
                         return p.jid
                     })
                     .filter(Boolean)
-                const tagText = jids.map((j) => `@${j.split('@')[0]}`).join(' ')
+                // Hidden tag: cuma teks, tapi semua member ke-tag (dapat notif)
+                // tanpa @mention yang nampak
                 await client.message.send(g.jid, {
                     type: 'text',
-                    text: `${text}\n\n${tagText}`,
+                    text: text,
                     contextInfo: { mentionedJids: jids }
                 })
                 sukses++
