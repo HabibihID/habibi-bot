@@ -2,6 +2,7 @@
 const fs = require('node:fs')
 const path = require('node:path')
 const { WaClient, createStore } = require('@habibicox10/zapo-id')
+const { createSqliteStore } = require('@zapo-js/store-sqlite')
 const config = require('./config')
 const { getText, getSender } = require('./lib/helper')
 
@@ -15,7 +16,27 @@ for (const file of fs.readdirSync(path.join(__dirname, 'commands'))) {
 console.log(`[bot] ${commands.size} command dimuat:`, [...commands.keys()].join(', '))
 
 async function main() {
-    const store = createStore() // memory store (default)
+    // SQLite store — session tersimpan permanen, nggak perlu pairing tiap restart
+    const authPath = path.join(__dirname, '.auth', 'state.sqlite')
+    fs.mkdirSync(path.dirname(authPath), { recursive: true })
+    const store = createStore({
+        backends: {
+            sqlite: createSqliteStore({ path: authPath, driver: 'auto' })
+        },
+        providers: {
+            auth: 'sqlite',
+            signal: 'sqlite',
+            preKey: 'sqlite',
+            session: 'sqlite',
+            identity: 'sqlite',
+            senderKey: 'sqlite',
+            appState: 'sqlite',
+            privacyToken: 'sqlite',
+            messages: 'sqlite',
+            threads: 'sqlite',
+            contacts: 'sqlite'
+        }
+    })
     const client = new WaClient(
         {
             store,
@@ -37,7 +58,9 @@ async function main() {
         console.log('Masukin kode ini di WhatsApp > Perangkat Tertaut > Tautkan perangkat\n')
     })
 
+    let alreadyPaired = false
     client.on('auth_paired', ({ credentials }) => {
+        alreadyPaired = true
         console.log(`[paired] login sebagai ${credentials.meJid ?? 'unknown'}`)
     })
 
@@ -75,8 +98,12 @@ async function main() {
         const connectPromise = client.connect().catch((e) => {
             console.error('[connect] error:', e.message)
         })
-        // Tunggu koneksi siap, lalu minta pairing code
+        // Tunggu koneksi siap, lalu minta pairing code (cuma kalau belum paired)
         setTimeout(async () => {
+            if (alreadyPaired) {
+                console.log('[auth] Session tersimpan, langsung connect tanpa pairing.')
+                return
+            }
             try {
                 const code = await client.auth.requestPairingCode(phone, true, config.pairingCode)
                 console.log(`\n🔑 Pairing code untuk ${phone}: ${code}`)
