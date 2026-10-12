@@ -6,8 +6,8 @@ module.exports = {
     prefix: '.',
     // Nama bot
     botName: 'HABIBI BOT',
-    // Pairing code custom (default dari lib: HABIOFFC)
-    pairingCode: 'HABIOFFC',
+    // Pairing code custom (harus tanpa huruf I dan O)
+    pairingCode: 'HABBYFAM',
     // Session ID (ganti kalau mau multi-bot)
     sessionId: 'habibi-bot-1'
 }

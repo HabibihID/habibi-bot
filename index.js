@@ -71,7 +71,7 @@ async function main() {
         // Tunggu koneksi siap, lalu minta pairing code
         setTimeout(async () => {
             try {
-                const code = await client.auth.requestPairingCode(phone)
+                const code = await client.auth.requestPairingCode(phone, true, config.pairingCode)
                 console.log(`\n🔑 Pairing code untuk ${phone}: ${code}`)
                 console.log('Buka WhatsApp > Perangkat Tertaut > Tautkan dengan nomor telepon')
                 console.log('Masukin kode di atas di HP kamu.\n')
