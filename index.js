@@ -6,12 +6,19 @@ const { createSqliteStore } = require('@zapo-js/store-sqlite')
 const config = require('./config')
 const { getText, getSender } = require('./lib/helper')
 
-// Load commands
+// Load commands (support 1 atau banyak command per file)
 const commands = new Map()
 for (const file of fs.readdirSync(path.join(__dirname, 'commands'))) {
     if (!file.endsWith('.js')) continue
-    const cmd = require(path.join(__dirname, 'commands', file))
-    commands.set(cmd.name, cmd)
+    const mod = require(path.join(__dirname, 'commands', file))
+    // Kalau export object berisi banyak command (tanpa .name langsung)
+    if (mod && !mod.name && typeof mod === 'object') {
+        for (const cmd of Object.values(mod)) {
+            if (cmd?.name) commands.set(cmd.name, cmd)
+        }
+    } else if (mod?.name) {
+        commands.set(mod.name, mod)
+    }
 }
 console.log(`[bot] ${commands.size} command dimuat:`, [...commands.keys()].join(', '))
 
