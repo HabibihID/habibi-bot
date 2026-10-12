@@ -10,7 +10,8 @@ module.exports = {
             `• ${config.prefix}menu — daftar perintah\n` +
             `• ${config.prefix}ping — cek kecepatan bot\n` +
             `• ${config.prefix}tagall [teks] — tag semua member grup\n` +
-            `• ${config.prefix}sticker — reply gambar untuk jadi stiker\n\n` +
+            `• ${config.prefix}sticker — reply gambar untuk jadi stiker\n` +
+            `• ${config.prefix}jpm <pesan> — broadcast ke semua grup\n\n` +
             `_Powered by @habibicox10/zapo-id_`
         await client.message.send(chatJid, text)
     }
