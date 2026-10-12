@@ -61,19 +61,29 @@ async function main() {
         }
     })
 
-    // Pairing flow: kalau belum login, minta pairing code
-    client.on('auth_pairing_required', async () => {
-        const phone = process.env.BOT_PHONE
-        if (!phone) {
-            console.log('[auth] Belum login. Set BOT_PHONE=628xxx lalu restart,')
-            console.log('       atau scan QR kalau muncul.')
-            return
-        }
-        const code = await client.auth.requestPairingCode(phone)
-        console.log(`\n🔑 Pairing code untuk ${phone}: ${code}\n`)
-    })
-
-    await client.connect()
+    // Pairing flow: minta kode secara proaktif setelah connect
+    const phone = process.env.BOT_PHONE
+    if (phone) {
+        // Jalanin connect di background
+        const connectPromise = client.connect().catch((e) => {
+            console.error('[connect] error:', e.message)
+        })
+        // Tunggu koneksi siap, lalu minta pairing code
+        setTimeout(async () => {
+            try {
+                const code = await client.auth.requestPairingCode(phone)
+                console.log(`\n🔑 Pairing code untuk ${phone}: ${code}`)
+                console.log('Buka WhatsApp > Perangkat Tertaut > Tautkan dengan nomor telepon')
+                console.log('Masukin kode di atas di HP kamu.\n')
+            } catch (e) {
+                console.error('[pairing] gagal:', e.message)
+            }
+        }, 5000)
+        await connectPromise
+    } else {
+        console.log('[auth] Set BOT_PHONE=628xxx untuk pairing code, atau scan QR.')
+        await client.connect()
+    }
 
     process.on('SIGINT', () => client.disconnect().then(() => process.exit(0)))
     process.on('SIGTERM', () => client.disconnect().then(() => process.exit(0)))
