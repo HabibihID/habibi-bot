@@ -89,11 +89,24 @@ module.exports = {
             const g = targets[i]
             try {
                 if (imageBuf) {
+                    // Upload dulu ke server WA (Zapo nggak support buffer langsung)
+                    const upload = await client.message.upload(imageBuf, {
+                        type: 'image',
+                        mimetype: 'image/jpeg'
+                    })
                     await client.message.send(g.jid, {
                         type: 'image',
-                        media: imageBuf,
-                        mimetype: 'image/jpeg',
-                        caption: text || ''
+                        imageMessage: {
+                            url: upload.url,
+                            mimetype: 'image/jpeg',
+                            caption: text || '',
+                            fileSha256: upload.fileSha256,
+                            fileLength: upload.fileLength,
+                            mediaKey: upload.mediaKey,
+                            fileEncSha256: upload.fileEncSha256,
+                            directPath: upload.directPath,
+                            mediaKeyTimestamp: upload.mediaKeyTimestamp
+                        }
                     })
                 } else {
                     await client.message.send(g.jid, text)

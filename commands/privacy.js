@@ -4,11 +4,13 @@
 // Kategori: lastseen, profilepic, about, readreceipt, groups
 // Nilai: all, contacts, contact_blacklist, none
 const CATEGORIES = {
-    lastseen: 'last',
-    profilepic: 'profile',
-    about: 'status',
-    readreceipt: 'readreceipts',
-    groups: 'groupadd'
+    lastseen: 'lastSeen',
+    online: 'online',
+    profilepic: 'profilePicture',
+    about: 'about',
+    readreceipt: 'readReceipts',
+    groups: 'groupAdd',
+    calladd: 'callAdd'
 }
 const VALUES = ['all', 'contacts', 'contact_blacklist', 'none']
 
