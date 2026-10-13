@@ -19,13 +19,22 @@ module.exports = {
         const terbuka = list.filter((g) => !g.announce).length
         const tertutup = list.filter((g) => g.announce).length
 
-        // Ambil jumlah member tiap grup via metadata
+        // Ambil jumlah member tiap grup via metadata + filter yang bot udah keluar
+        const myJid = client.user?.jid || client.user?.id
         const withSize = []
         for (const g of list) {
             let size = g.size || '?'
             try {
                 const meta = await client.group.queryGroupMetadata(g.jid)
                 size = meta.participants?.length ?? size
+                // Skip kalau bot udah nggak jadi member (data basi)
+                if (myJid && meta.participants) {
+                    const stillIn = meta.participants.some((p) => {
+                        const pj = p.jid || p.phoneNumber || p.lid || ''
+                        return pj && myJid.split('@')[0] && pj.includes(myJid.split('@')[0])
+                    })
+                    if (!stillIn) continue
+                }
             } catch { /* pakai size dari list */ }
             withSize.push({ ...g, memberCount: size })
         }
