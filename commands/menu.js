@@ -27,13 +27,30 @@ module.exports = {
         try {
             if (fs.existsSync(imgPath)) {
                 const buf = fs.readFileSync(imgPath)
-                await client.message.send(chatJid, { image: buf, caption: text })
+                const upload = await client.message.upload(buf, {
+                    type: 'image',
+                    mimetype: 'image/jpeg'
+                })
+                await client.message.send(chatJid, {
+                    type: 'image',
+                    imageMessage: {
+                        url: upload.url,
+                        mimetype: 'image/jpeg',
+                        caption: text,
+                        fileSha256: upload.fileSha256,
+                        fileLength: upload.fileLength,
+                        mediaKey: upload.mediaKey,
+                        fileEncSha256: upload.fileEncSha256,
+                        directPath: upload.directPath,
+                        mediaKeyTimestamp: upload.mediaKeyTimestamp
+                    }
+                })
                 return
             }
         } catch (e) {
             console.error('[menu] Gagal kirim gambar:', e.message)
         }
-        // Fallback: teks aja kalau gambar nggak ada
+        // Fallback: teks aja kalau gambar gagal
         await client.message.send(chatJid, text)
     }
 }
