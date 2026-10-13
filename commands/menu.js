@@ -1,3 +1,5 @@
+const fs = require('fs')
+const path = require('path')
 const config = require('../config')
 
 module.exports = {
@@ -20,6 +22,18 @@ module.exports = {
             `👤 Developer: ${config.developer}\n` +
             `🌐 ${config.website}\n\n` +
             `_Powered by @habibicox10/zapo-id_`
+
+        const imgPath = path.join(__dirname, '..', 'media', 'menu.jpg')
+        try {
+            if (fs.existsSync(imgPath)) {
+                const buf = fs.readFileSync(imgPath)
+                await client.message.send(chatJid, { image: buf, caption: text })
+                return
+            }
+        } catch (e) {
+            console.error('[menu] Gagal kirim gambar:', e.message)
+        }
+        // Fallback: teks aja kalau gambar nggak ada
         await client.message.send(chatJid, text)
     }
 }
