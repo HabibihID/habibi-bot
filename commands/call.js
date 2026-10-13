@@ -102,11 +102,18 @@ module.exports = {
             }
             client.on('voip_call_state', onState)
 
-            // 5. Notif saat audio selesai
-            const onFinished = (call) => {
-                if (call.callId === callId) {
-                    console.log(`[voip] Audio selesai diputar`)
+            // 5. Loop audio: putar lagi setiap selesai
+            const onFinished = async (call) => {
+                if (call.callId !== callId) return
+                if (activeCallId !== callId) {
                     client.off('voip_call_outbound_audio_finished', onFinished)
+                    return
+                }
+                console.log(`[voip] Audio selesai, loop lagi...`)
+                try {
+                    await client.voip.loadAudio(callId, audioPath)
+                } catch (e) {
+                    console.error(`[voip] Gagal loop audio: ${e.message}`)
                 }
             }
             client.on('voip_call_outbound_audio_finished', onFinished)
