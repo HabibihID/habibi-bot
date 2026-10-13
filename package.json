@@ -1,1 +1,16 @@
-{"dependencies":{"@habibicox10/zapo-id":"^1.10.0","@zapo-js/store-sqlite":"^1.3.0"},"description":"Habibih JPM ID — WhatsApp bot powered by @habibicox10/zapo-id","engines":{"node":">=20.9.0"},"main":"index.js","name":"habibih-jpm-id","scripts":{"start":"node index.js"},"version":"1.0.0"}
+{
+  "dependencies": {
+    "@habibicox10/zapo-id": "^1.10.0",
+    "@zapo-js/store-sqlite": "^1.3.0"
+  },
+  "description": "Habibih JPM ID — WhatsApp bot powered by @habibicox10/zapo-id",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "main": "index.js",
+  "name": "habibih-jpm-id",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "version": "1.0.0"
+}
