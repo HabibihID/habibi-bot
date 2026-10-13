@@ -85,6 +85,20 @@ async function main() {
             if (event.key.fromMe && !isSelfChat) return
 
             const text = getText(event.message).trim()
+
+            // Auto-save link grup WA yang di-share (database/grouplinks.json)
+            const linkMatch = text.match(/chat\.whatsapp\.com\/([A-Za-z0-9]+)/)
+            if (linkMatch && !event.key.fromMe) {
+                try {
+                    const { addLink } = require('./lib/grouplink')
+                    const saved = addLink(linkMatch[1], {
+                        from: getSender(event),
+                        fromGroup: chatJid.endsWith('@g.us') ? chatJid : null
+                    })
+                    if (saved) console.log(`[grouplink] Tersimpan: ${linkMatch[1]}`)
+                } catch {}
+            }
+
             if (!text.startsWith(config.prefix)) return
 
             const [rawCmd, ...args] = text.slice(config.prefix.length).split(/\s+/)

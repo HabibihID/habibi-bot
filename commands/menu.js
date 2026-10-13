@@ -18,7 +18,8 @@ module.exports = {
             `• ${config.prefix}listgc — daftar grup bot\n` +
             `• ${config.prefix}tagall [teks] — tag semua member grup\n` +
             `• ${config.prefix}privacy — cek/ubah privacy akun\n` +
-            `• ${config.prefix}joingc <link> — join grup via link\n\n` +
+            `• ${config.prefix}joingc <link> — join grup via link\n` +
+            `• ${config.prefix}listlink — database link grup tersimpan\n\n` +
             `👤 Developer: ${config.developer}\n` +
             `🌐 ${config.website}\n\n` +
             `_Powered by @habibicox10/zapo-id_`
