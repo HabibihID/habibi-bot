@@ -50,7 +50,7 @@ async function main() {
             store,
             sessionId: config.sessionId,
             pairingCode: config.pairingCode, // HABBYFAM
-            plugins: [voipPlugin()]
+            plugins: [voipPlugin({ useRawUdpTransport: true })]
         },
         undefined // default logger
     )
