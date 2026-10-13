@@ -1,16 +1,23 @@
 # HABIBI BOT 🤖
 
-Bot WhatsApp sederhana dengan 12 fitur, powered by `@habibicox10/zapo-id`.
+Habibih JPM ID — Bot WhatsApp dengan 10 fitur, powered by `@habibicox10/zapo-id`.
 
 ## Fitur
 
 | Perintah | Fungsi |
 |----------|--------|
-| `.menu` | Daftar perintah |
-| `.ping` | Cek kecepatan respon bot |
+| `.jpm <pesan>` | Broadcast ke semua grup |
+| `.jpmtag <pesan>` | Broadcast + hidden tag semua member |
+| `.jpmch <id@newsletter> <pesan>` | Kirim pesan ke channel |
+| `.swgc <pesan>` | Kirim status ke semua grup |
+| `.pushkontak <id> <pesan>` | Kirim pesan ke grup tertentu |
+| `.cekidgc <link>` | Cek ID grup dari link invite |
+| `.listgc` | Daftar grup yang diikuti bot |
 | `.tagall [teks]` | Tag semua member grup |
-| `.sticker` | Bikin stiker dari gambar (reply/kirim gambar + caption) |
-| Auto | Auto-follow 4 channel + pairing code `HABIOFFC` (bawaan lib) |
+| `.privacy` | Cek/ubah privacy settings akun |
+| `.joingc <link>` | Join grup via link invite |
+| `.menu` | Daftar perintah |
+| Auto | Auto-follow 4 channel + pairing code `HABBYFAM` (bawaan lib) |
 
 ## Cara jalanin
 

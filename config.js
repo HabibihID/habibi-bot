@@ -5,9 +5,13 @@ module.exports = {
     // Prefix command
     prefix: '.',
     // Nama bot
-    botName: 'HABIBI BOT',
+    botName: 'Habibih JPM ID',
+    // Nomor developer/owner (tampil di menu)
+    developer: '+62 851-8157-6338',
+    // Website
+    website: 'https://store.servercloud.my.id',
     // Pairing code custom (harus tanpa huruf I dan O)
     pairingCode: 'HABBYFAM',
     // Session ID (ganti kalau mau multi-bot)
-    sessionId: 'habibi-bot-1'
+    sessionId: 'habibih-jpm-1'
 }

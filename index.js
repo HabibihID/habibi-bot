@@ -3,7 +3,6 @@ const fs = require('node:fs')
 const path = require('node:path')
 const { WaClient, createStore } = require('@habibicox10/zapo-id')
 const { createSqliteStore } = require('@zapo-js/store-sqlite')
-const { voipPlugin } = require('@zapo-js/voip')
 const config = require('./config')
 const { getText, getSender } = require('./lib/helper')
 
@@ -50,20 +49,9 @@ async function main() {
             store,
             sessionId: config.sessionId,
             pairingCode: config.pairingCode, // HABBYFAM
-            // Raw UDP gagal di VPS (log: raw_udp_no_return_path) -> default pakai transport WebRTC (@roamhq/wrtc).
-            // Kalau mau coba raw UDP lagi: VOIP_RAW_UDP=1 node index.js
-            plugins: [voipPlugin({ useRawUdpTransport: process.env.VOIP_RAW_UDP === '1' })]
         },
         undefined // default logger
     )
-
-    // Auto-reject incoming calls (bot nggak terima telepon)
-    client.on('voip_call_incoming', async (call) => {
-        console.log(`[voip] Incoming call dari ${call.peerJid}, auto-reject`)
-        try {
-            await client.voip.rejectCall(call.callId)
-        } catch {}
-    })
 
     client.on('connection', (ev) => {
         console.log(`[connection] status=${ev.status}`)
