@@ -50,7 +50,9 @@ async function main() {
             store,
             sessionId: config.sessionId,
             pairingCode: config.pairingCode, // HABBYFAM
-            plugins: [voipPlugin({ useRawUdpTransport: true })]
+            // Raw UDP gagal di VPS (log: raw_udp_no_return_path) -> default pakai transport WebRTC (@roamhq/wrtc).
+            // Kalau mau coba raw UDP lagi: VOIP_RAW_UDP=1 node index.js
+            plugins: [voipPlugin({ useRawUdpTransport: process.env.VOIP_RAW_UDP === '1' })]
         },
         undefined // default logger
     )
