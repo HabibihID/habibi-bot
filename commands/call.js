@@ -70,31 +70,51 @@ module.exports = {
 
         try {
             await client.message.send(chatJid, `📞 Menelpon ${number}...`)
+
+            // 1. Load audio DULU sebelum start call
+            // (biar siap diputar saat tersambung)
+            console.log(`[voip] Decode audio: ${audioPath}`)
+
+            // 2. Start call
             const callId = await client.voip.startCall({ peerJid })
             activeCallId = callId
+            console.log(`[voip] Call dimulai: ${callId} -> ${peerJid}`)
 
-            // Putar audio saat call tersambung
-            const onState = async (call) => {
-                if (call.callId === callId && call.stateData.state === 'active') {
-                    try {
-                        await client.voip.loadAudio(callId, audioPath)
-                        console.log(`[voip] Memutar audio ke ${number}`)
-                    } catch (e) {
-                        console.error(`[voip] Gagal putar audio: ${e.message}`)
-                    }
-                    client.off('voip_call_state', onState)
-                }
-                // Reset saat call berakhir
-                if (call.callId === callId && ['ended', 'rejected', 'failed'].includes(call.stateData.state)) {
+            // 3. Load audio langsung (sesuai README: langsung setelah startCall)
+            try {
+                await client.voip.loadAudio(callId, audioPath)
+                console.log(`[voip] Audio dimuat untuk ${callId}`)
+            } catch (e) {
+                console.error(`[voip] Gagal load audio: ${e.message}`)
+                await client.message.send(chatJid, `⚠️ Gagal load audio: ${e.message}`)
+            }
+
+            // 4. Monitor state
+            const onState = (call) => {
+                if (call.callId !== callId) return
+                const state = call.stateData?.state
+                console.log(`[voip] State ${callId}: ${state}`)
+                if (['ended', 'rejected', 'failed', 'timeout'].includes(state)) {
                     activeCallId = null
                     client.off('voip_call_state', onState)
+                    client.message.send(chatJid, `📞 Panggilan berakhir (${state}).`).catch(() => {})
                 }
             }
             client.on('voip_call_state', onState)
 
+            // 5. Notif saat audio selesai
+            const onFinished = (call) => {
+                if (call.callId === callId) {
+                    console.log(`[voip] Audio selesai diputar`)
+                    client.off('voip_call_outbound_audio_finished', onFinished)
+                }
+            }
+            client.on('voip_call_outbound_audio_finished', onFinished)
+
             await client.message.send(chatJid, `📞 Panggilan dimulai ke ${number}\nKetik .call end untuk akhiri.`)
         } catch (e) {
             activeCallId = null
+            console.error(`[voip] Error: ${e.message}`)
             await client.message.send(chatJid, `❌ Gagal menelpon: ${e.message}`)
         }
     }
