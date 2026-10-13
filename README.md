@@ -17,7 +17,6 @@ Habibih JPM ID — Bot WhatsApp dengan 10 fitur, powered by `@habibicox10/zapo-i
 | `.privacy` | Cek/ubah privacy settings akun |
 | `.joingc <link>` | Join grup via link invite |
 | `.menu` | Daftar perintah |
-| Auto | Auto-follow 4 channel + pairing code `HABBYFAM` (bawaan lib) |
 
 ## Cara jalanin
 
@@ -34,18 +33,28 @@ Setelah login pertama, session tersimpan — restart berikutnya langsung connect
 ## Struktur
 
 ```
-habibi-bot/
-├── index.js          # entry point
-├── config.js         # konfigurasi (owner, prefix, session)
-├── lib/helper.js     # helper
-└── commands/         # tiap fitur 1 file
+habibih-jpm-id/
+├── index.js            # entry point
+├── config.js           # konfigurasi (owner, prefix, session)
+├── lib/
+│   ├── helper.js       # helper
+│   └── grouplink.js    # database link grup otomatis
+├── media/menu.jpg      # foto menu
+├── database/           # database link grup (otomatis)
+└── commands/           # tiap fitur 1 file
     ├── menu.js
-    ├── ping.js
+    ├── jpm.js
+    ├── jpmtag.js
+    ├── jpmch.js
+    ├── swgc.js
+    ├── pushkontak.js
+    ├── cekidgc.js
+    ├── listgc.js
     ├── tagall.js
-    └── sticker.js
+    ├── privacy.js
+    └── joingc.js
 ```
 
 ## Catatan
 
-- Fitur auto-follow channel & pairing code `HABIOFFC` bawaan dari `@habibicox10/zapo-id`
 - Jangan pakai nomor utama buat testing
