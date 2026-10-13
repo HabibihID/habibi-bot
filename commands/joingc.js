@@ -17,14 +17,32 @@ module.exports = {
             await client.message.send(chatJid, '❌ Link invite tidak valid.')
             return
         }
+        const code = match[1]
         try {
-            const meta = await client.group.joinGroupViaInvite(match[1])
+            // Cek dulu info grup — kalau butuh approval admin, kasih tau
+            try {
+                const info = await client.group.queryGroupInviteInfo(code)
+                if (info.membershipApprovalEnabled) {
+                    await client.message.send(
+                        chatJid,
+                        `⚠️ Grup *${info.subject || ''}* membutuhkan persetujuan admin.\n` +
+                        `Bot tidak bisa join otomatis — minta admin invite manual.`
+                    )
+                    return
+                }
+            } catch {}
+            const meta = await client.group.joinGroupViaInvite(code)
             await client.message.send(
                 chatJid,
                 `✅ Berhasil join grup: *${meta.subject || meta.jid}*`
             )
         } catch (e) {
-            await client.message.send(chatJid, `❌ Gagal join: ${e.message}`)
+            // Error "expected <group>" biasanya = grup butuh approval / link bermasalah
+            let msg = e.message
+            if (msg.includes('expected <group>')) {
+                msg = 'Grup tidak bisa di-join otomatis (kemungkinan butuh persetujuan admin atau link tidak valid).'
+            }
+            await client.message.send(chatJid, `❌ Gagal join: ${msg}`)
         }
     }
 }
